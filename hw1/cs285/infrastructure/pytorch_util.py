@@ -69,6 +69,12 @@ def build_mlp(
 
     return model
 
+    '''
+    Another method is to use list = [('name', nn.Linear()), (), ()] , then nn.Sequential(collections.OrderedDict(list))
+    Or list = [nn.Linear(), xx ,xx] and nn.Sequential(list)
+
+    '''
+
 device = None
 
 
