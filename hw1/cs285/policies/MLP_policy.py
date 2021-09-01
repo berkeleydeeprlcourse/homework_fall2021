@@ -107,6 +107,8 @@ class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
             return distributions.Categorical(logits=self.logits_na(observation))
         else:
             return distributions.Normal(self.mean_net(observation), torch.exp(self.logstd)[None])
+
+    loss = -action_distribution.log_prob(actions).mean()
     '''
 
 
@@ -123,7 +125,20 @@ class MLPPolicySL(MLPPolicy):
             adv_n=None, acs_labels_na=None, qvals=None
     ):
         # TODO: update the policy and return the loss
-        loss = TODO
+        # question, why not run many iterations?
+
+        # convert inputs as torch.tensor, and predict actions
+        actions = ptu.from_numpy(actions)
+        predicted_actions = self.forward(ptu.from_numpy(observations))
+
+        # get loss and train
+        loss = self.loss(actions, predicted_actions)
+
+        # get gradient and backpropagation
+        self.optimizer.zero_grad()
+        loss.backward()
+        self.optimizer.step()
+
         return {
             # You can add extra logging information here, but keep this line
             'Training Loss': ptu.to_numpy(loss),
