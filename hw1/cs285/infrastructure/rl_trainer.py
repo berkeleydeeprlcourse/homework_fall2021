@@ -291,6 +291,7 @@ class RL_Trainer(object):
     def perform_expert(self, expert_policy):
         print("\nCollecting data for EXPERT !! eval...")
         eval_paths, eval_envsteps_this_batch = utils.sample_trajectories(self.env, expert_policy, self.params['eval_batch_size'], self.params['ep_len'])
+        eval_returns = [eval_path["reward"].sum() for eval_path in eval_paths]
         mean_exp = np.mean(eval_returns)
         std_exp = np.std(eval_returns)
         mean_exp_max = np.max(eval_returns)
