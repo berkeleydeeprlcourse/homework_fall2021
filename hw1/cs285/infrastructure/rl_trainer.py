@@ -88,6 +88,8 @@ class RL_Trainer(object):
         self.total_envsteps = 0
         self.start_time = time.time()
 
+        mean_list = []
+        std_list =  []
         for itr in range(n_iter):
             print("\n\n********** Iteration %i ************"%itr)
 
@@ -124,8 +126,6 @@ class RL_Trainer(object):
             training_logs = self.train_agent()  # HW1: implement this function below
 
             # log/save
-            mean_list = []
-            std_list =  []
             if self.log_video or self.log_metrics:
 
                 # perform logging
@@ -140,9 +140,9 @@ class RL_Trainer(object):
                     print('\nSaving agent params')
                     self.agent.save('{}/policy_itr_{}.pt'.format(self.params['logdir'], itr))
 
-            import numpy as np
-            print('mean : ', np.round(mean_list))
-            print('std  : ', np.round(std_list))
+        import numpy as np
+        print('mean : ', np.round(mean_list))
+        print('std  : ', np.round(std_list))
 
     ####################################
     ####################################

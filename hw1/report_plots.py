@@ -36,6 +36,14 @@ def set_plot_env(iterations, mean, std, mean_exp, mean_bc, exp_name):
         os.makedirs(exp_dir)
     plt.savefig(fname=exp_dir + exp_name + '.svg', format='svg')
 
+
+class Ant_exp:
+    mean = [1]
+    std =  []
+    mean_bc = mean[0]
+    mean_expert = mean[-1]
+    iterations = np.arange(len(mean))
+
 if __name__ == "__main__":
     no_iter = np.arange(10)
     mean = np.linspace(0.9, 1.1, 10)
@@ -44,8 +52,4 @@ if __name__ == "__main__":
     mean_expert = np.ones(10) * 1.3
     mean_bc = np.ones(10) * 0.9
 
-
-class Ant_exp:
-    iterations = np.arange(20)
-    mean = 
-    std =  
+    set_plot_env(no_iter, mean, std, mean_expert, mean_bc, 'Ant')
