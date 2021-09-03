@@ -3,22 +3,41 @@ import seaborn as sns
 
 import numpy as np
 import pandas as pd
+import os
 
 # manually add data of Ant and Halfcheeta
 
 
-no_iter = np.arange(10)
-mean = []
-std = []
-mean_expert = np.ones(10) * 1
-mean_bc = np.ones(10) * 1
+def plot_mean_std(ax, iterations, mean, std, mean_exp, mean_bc):
+    # style = "darkgrid"
+    style = "whitegrid"
+    sns.set_theme(style=style) # background color
 
-sns.set_theme(style="darkgrid")
+    ax.plot(iterations, mean_expert, 'r', label='expert')
+    ax.plot(iterations, mean_bc, 'g', label='naive bc')
+    ax.plot(iterations, mean, '-s', label='mean DAgger')
+    ax.fill_between(iterations, mean-std, mean+std, alpha=0.2)
+    
 
-# Load an example dataset with long-form data
-fmri = sns.load_dataset("fmri")
 
-# Plot the responses for different events and regions
-sns.lineplot(x="timepoint", y="signal",
-             hue="region", style="event",
-             data=fmri)
+if __name__ == "__main__":
+    no_iter = np.arange(10)
+    mean = np.linspace(0.9, 1.1, 10)
+    std = np.linspace(0, 0.2, 10)
+
+    mean_expert = np.ones(10) * 1.3
+    mean_bc = np.ones(10) * 0.9
+
+
+    fig, ax = plt.subplots(1,1)
+    plot_mean_std(ax, no_iter, mean, std, mean_expert, mean_bc)
+
+    ax.legend()
+    ax.set_xlabel('Iterations')
+    ax.set_ylabel('Return')
+    ax.set_title('return of exp')
+
+    exp_dir = 'plots/'
+    if not os.path.exists(exp_dir):
+        os.makedirs(exp_dir)
+    plt.savefig(fname=exp_dir + 'name' + '.svg', format='svg')
