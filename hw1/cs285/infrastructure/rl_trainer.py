@@ -143,7 +143,7 @@ class RL_Trainer(object):
         print('mean : ', np.round(mean_list))
         print('std  : ', np.round(std_list))
 
-        self.perform_expert(expert_policy)
+        # self.perform_expert(expert_policy)
 
     ####################################
     ####################################
