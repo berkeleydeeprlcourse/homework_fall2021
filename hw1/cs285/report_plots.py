@@ -5,8 +5,6 @@ import numpy as np
 import pandas as pd
 import os
 
-# manually add data of Ant and Halfcheeta
-
 
 def plot_mean_std(ax, iterations, mean, std, mean_expert, mean_bc):
     mean = np.array(mean)
@@ -35,7 +33,7 @@ def set_plot_env(iterations, mean, std, mean_expert, mean_bc, exp_name):
     exp_dir = 'plots/'
     if not os.path.exists(exp_dir):
         os.makedirs(exp_dir)
-    plt.savefig(fname=exp_dir + exp_name + '.png', format='png')
+    plt.savefig(fname=exp_dir + 'figure-2_' + exp_name + '.png', format='png')
 
 def plot_DAgger(mean, std, mean_expert, exp_name):
     iterations = np.arange(len(mean))
@@ -66,7 +64,7 @@ def plot_changing_ep(ep_len, mean_len, std_len):
     exp_dir = 'plots/'
     if not os.path.exists(exp_dir):
         os.makedirs(exp_dir)
-    plt.savefig(fname=exp_dir + 'varying' + '.png', format='png')
+    plt.savefig(fname=exp_dir + 'figure-1_varying_train_step' + '.png', format='png')
 
 
 class Ant_exp:
@@ -77,32 +75,32 @@ class Ant_exp:
     ep_len = [100, 300, 500, 700, 990, 1100, 1400, 1500, 1700]
     mean_len = [567, 1505, 3849, 3296, 3774, 3570, 2227, 4236, 4249]
     std_len =  [7,   1250, 1299, 1604, 1363, 1392, 1740, 1151, 901]
-    mean_exp_len = []
-    std_exp_len = []
 
 class Hooper_exp:
-
     mean = [ 523., 1700., 2453., 3763., 3778., 3790., 3388., 3771., 3537., 3788.]
     std  = [ 75., 607., 725.,   4.,   3.,   4., 671.,   3., 160.,   3.]
     mean_expert = 3779
     
 
 if __name__ == "__main__":
-    # no_iter = np.arange(10)
-    # mean = np.linspace(0.9, 1.1, 10)
-    # std = np.linspace(0, 0.2, 10)
-    # mean_expert = np.ones(10) * 1.3
-    # mean_bc = np.ones(10) * 0.9
 
+    # figure 1
     exp = Ant_exp
-    # exp = Hooper_exp
-
-    # mean = exp.mean
-    # std = exp.std
-    # mean_expert = exp.mean_expert
-    # plot_DAgger(mean, std, mean_expert, 'Hooper')
-
     mean_len = exp.mean_len
     std_len = exp.std_len
     ep_len = exp.ep_len
     plot_changing_ep(ep_len, mean_len, std_len)
+
+    # figure 2-1
+    exp = Ant_exp
+    mean = exp.mean
+    std = exp.std
+    mean_expert = exp.mean_expert
+    plot_DAgger(mean, std, mean_expert, 'Ant')
+
+    # figure 2-2
+    exp = Hooper_exp
+    mean = exp.mean
+    std = exp.std
+    mean_expert = exp.mean_expert
+    plot_DAgger(mean, std, mean_expert, 'Hooper')
