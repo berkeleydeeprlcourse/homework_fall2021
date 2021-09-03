@@ -130,7 +130,7 @@ class MLPPolicySL(MLPPolicy):
         # convert inputs as torch.tensor, and predict actions
         actions = ptu.from_numpy(actions)
         # predicted_actions = self.forward(ptu.from_numpy(observations))
-        predicted_actions = self.get_action(observations)
+        predicted_actions = self.get_action(ptu.from_numpy(observations))
 
         # get loss and train
         loss = self.loss(actions, predicted_actions)
