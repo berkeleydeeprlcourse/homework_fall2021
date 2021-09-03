@@ -84,7 +84,7 @@ class ReplayBuffer(object):
         self.next_obs = self.next_obs[random_indices]
         self.terminals = self.terminals[random_indices]
 
-        return self.sample_recent_data(batch_size
+        return self.sample_recent_data(batch_size)
  
         '''
         other implementations
