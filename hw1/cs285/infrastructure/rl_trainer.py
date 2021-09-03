@@ -140,9 +140,10 @@ class RL_Trainer(object):
                     print('\nSaving agent params')
                     self.agent.save('{}/policy_itr_{}.pt'.format(self.params['logdir'], itr))
 
-        import numpy as np
         print('mean : ', np.round(mean_list))
         print('std  : ', np.round(std_list))
+
+        self.perform_expert(expert_policy)
 
     ####################################
     ####################################
@@ -286,3 +287,13 @@ class RL_Trainer(object):
             self.logger.flush()
 
             return np.mean(eval_returns), np.std(eval_returns)
+
+    def perform_expert(self, expert_policy):
+        print("\nCollecting data for EXPERT !! eval...")
+        eval_paths, eval_envsteps_this_batch = utils.sample_trajectories(self.env, expert_policy, self.params['eval_batch_size'], self.params['ep_len'])
+        mean_exp = np.mean(eval_returns)
+        std_exp = np.std(eval_returns)
+        mean_exp_max = np.max(eval_returns)
+        mean_exp_min = np.min(eval_returns)
+
+        print('mean exp: {}, std exp: {}, mean max: {}, mean min: {}'.format(np.round(mean_exp), np.round(std_exp), np.round(mean_exp_max), np.round(mean_exp_min) ))
