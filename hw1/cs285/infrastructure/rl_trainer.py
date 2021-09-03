@@ -130,19 +130,19 @@ class RL_Trainer(object):
 
                 # perform logging
                 print('\nBeginning logging procedure...')
-                mean, std = self.perform_logging(
+                self.perform_logging(
                     itr, paths, eval_policy, train_video_paths, training_logs)
 
-                mean_list.append(mean)
-                std_list.append(std)
+                # mean_list.append(mean)
+                # std_list.append(std)
 
                 if self.params['save_params']:
                     print('\nSaving agent params')
                     self.agent.save('{}/policy_itr_{}.pt'.format(self.params['logdir'], itr))
 
-        import numpy as np
-        print('mean : ', np.round(mean_list))
-        print('std  : ', np.round(std_list))
+        # import numpy as np
+        # print('mean : ', np.round(mean_list))
+        # print('std  : ', np.round(std_list))
 
     ####################################
     ####################################
@@ -285,4 +285,4 @@ class RL_Trainer(object):
 
             self.logger.flush()
 
-            return np.mean(eval_returns), np.std(eval_returns)
+            # return np.mean(eval_returns), np.std(eval_returns)
