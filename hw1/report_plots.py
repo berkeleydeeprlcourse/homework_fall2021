@@ -18,16 +18,8 @@ def plot_mean_std(ax, iterations, mean, std, mean_exp, mean_bc):
     
 
 
-if __name__ == "__main__":
-    no_iter = np.arange(10)
-    mean = np.linspace(0.9, 1.1, 10)
-    std = np.linspace(0, 0.2, 10)
+def set_plot_env(iterations, mean, std, mean_exp, mean_bc, exp_name):
 
-    mean_expert = np.ones(10) * 1.3
-    mean_bc = np.ones(10) * 0.9
-
-
-    # fig, ax = plt.subplots(1,1)
     plt.figure(figsize=(10,5))
     style = "whitegrid"
     sns.set_theme(style=style) # background color
@@ -42,4 +34,18 @@ if __name__ == "__main__":
     exp_dir = 'plots/'
     if not os.path.exists(exp_dir):
         os.makedirs(exp_dir)
-    plt.savefig(fname=exp_dir + 'Ant' + '.svg', format='svg')
+    plt.savefig(fname=exp_dir + exp_name + '.svg', format='svg')
+
+if __name__ == "__main__":
+    no_iter = np.arange(10)
+    mean = np.linspace(0.9, 1.1, 10)
+    std = np.linspace(0, 0.2, 10)
+
+    mean_expert = np.ones(10) * 1.3
+    mean_bc = np.ones(10) * 0.9
+
+
+class Ant_exp:
+    iterations = np.arange(20)
+    mean = 
+    std =  
