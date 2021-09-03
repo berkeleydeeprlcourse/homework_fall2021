@@ -9,14 +9,12 @@ import os
 
 
 def plot_mean_std(ax, iterations, mean, std, mean_exp, mean_bc):
-    # style = "darkgrid"
-    style = "whitegrid"
-    sns.set_theme(style=style) # background color
+    
 
     ax.plot(iterations, mean_expert, 'r', label='expert')
     ax.plot(iterations, mean_bc, 'g', label='naive bc')
-    ax.plot(iterations, mean, '-s', label='mean DAgger')
-    ax.fill_between(iterations, mean-std, mean+std, alpha=0.2)
+    ax.plot(iterations, mean, 'b-s', label='DAgger mean')
+    ax.fill_between(iterations, mean-std, mean+std, alpha=0.2, label='DAgger std')
     
 
 
@@ -29,7 +27,11 @@ if __name__ == "__main__":
     mean_bc = np.ones(10) * 0.9
 
 
-    fig, ax = plt.subplots(1,1)
+    # fig, ax = plt.subplots(1,1)
+    plt.figure(figsize=(10,5))
+    style = "whitegrid"
+    sns.set_theme(style=style) # background color
+    ax = plt.gca()
     plot_mean_std(ax, no_iter, mean, std, mean_expert, mean_bc)
 
     ax.legend()
@@ -40,4 +42,4 @@ if __name__ == "__main__":
     exp_dir = 'plots/'
     if not os.path.exists(exp_dir):
         os.makedirs(exp_dir)
-    plt.savefig(fname=exp_dir + 'name' + '.svg', format='svg')
+    plt.savefig(fname=exp_dir + 'Ant' + '.svg', format='svg')
