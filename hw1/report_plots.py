@@ -44,16 +44,41 @@ def plot_DAgger(mean, std, mean_expert, exp_name):
     mean_expert = mean_expert * I 
     set_plot_env(iterations, mean, std, mean_expert, mean_bc, exp_name)
 
+def plot_changing_ep(ep_len, mean_len, std_len):
+    plt.figure(figsize=(10,5))
+    style = "whitegrid"
+    sns.set_theme(style=style) # background color
+    ax = plt.gca()
+
+    mean_len = np.array(mean_len)
+    std_len = np.array(std_len)
+    I = np.ones(len(mean_len))
+    mean_expert = Ant_exp.mean_expert * I 
+
+    ax.plot(ep_len, mean_expert, 'r', label='expert')
+    plt.plot(ep_len, mean_len, 'b-s', label='bc mean')
+    plt.fill_between(ep_len, mean_len-std_len, mean_len+std_len, alpha=0.2, label='bc std')
+    ax.legend(loc='upper left')
+    ax.set_xlabel('num of traning steps')
+    ax.set_ylabel('Return')
+    ax.set_title('return of ' + 'Ant experiments with varying traning steps')
+
+    exp_dir = 'plots/'
+    if not os.path.exists(exp_dir):
+        os.makedirs(exp_dir)
+    plt.savefig(fname=exp_dir + 'varying' + '.png', format='png')
+
+
 class Ant_exp:
-    # mean = [4274., 4648., 4746., 4619., 4447., 4356., 4731., 4739., 4581., 4834., 4648., 4382., 4750., 4809., 4729., 4718., 4492., 4829., 4676., 4682.]
-    # std =  [1128.,   53.,   85.,  103.,  854., 1030.,  124.,  135.,  336.,  109.,  499., 1152.,  91.,   68.,  104.,   72.,  169.,  127.,   81.,  375.]
     mean = [4274., 4648., 4746., 4619., 4447., 4356., 4731., 4739., 4581., 4834.]
     std =  [1128.,   53.,   85.,  103.,  854., 1030.,  124.,  135.,  336.,  109.]
-
-    ep_len = [100, 300, 500, 800, 1000, 1500, 2000]
     mean_expert = 4710
-    mean_len = []
-    std_len = []
+
+    ep_len = [100, 300, 500, 700, 990, 1100, 1400, 1500, 1700]
+    mean_len = [567, 1505, 3849, 3296, 3774, 3570, 2227, 4236, 4249]
+    std_len =  [7,   1250, 1299, 1604, 1363, 1392, 1740, 1151, 901]
+    mean_exp_len = []
+    std_exp_len = []
 
 class Hooper_exp:
 
@@ -66,16 +91,18 @@ if __name__ == "__main__":
     # no_iter = np.arange(10)
     # mean = np.linspace(0.9, 1.1, 10)
     # std = np.linspace(0, 0.2, 10)
-
     # mean_expert = np.ones(10) * 1.3
     # mean_bc = np.ones(10) * 0.9
 
-    # exp = Ant_exp
-    exp = Hooper_exp
+    exp = Ant_exp
+    # exp = Hooper_exp
 
-    mean = exp.mean
-    std = exp.std
-    mean_expert = exp.mean_expert
+    # mean = exp.mean
+    # std = exp.std
+    # mean_expert = exp.mean_expert
+    # plot_DAgger(mean, std, mean_expert, 'Hooper')
 
-
-    plot_DAgger(mean, std, mean_expert, 'Hooper')
+    mean_len = exp.mean_len
+    std_len = exp.std_len
+    ep_len = exp.ep_len
+    plot_changing_ep(ep_len, mean_len, std_len)
