@@ -134,7 +134,7 @@ class MLPPolicyPG(MLPPolicy):
         actions = ptu.from_numpy(actions)
         advantages = ptu.from_numpy(advantages)
 
-        # TODO: update the policy using policy gradient
+        # DONE: update the policy using policy gradient
         # HINT1: Recall that the expression that we want to MAXIMIZE
             # is the expectation over collected trajectories of:
             # sum_{t=0}^{T-1} [grad [log pi(a_t|s_t) * (Q_t - b_t)]]
@@ -143,8 +143,16 @@ class MLPPolicyPG(MLPPolicy):
         # HINT3: don't forget that `optimizer.step()` MINIMIZES a loss
         # HINT4: use self.optimizer to optimize the loss. Remember to
             # 'zero_grad' first
+        # FIXME: definitely wrong, still WIP
 
-        # FIXME: skip till Q6
+        self.loss = self.baseline_loss # FIXME: is it baseline?
+
+        actions_predicted = self.forward(observations).log_prob()
+        loss = self.loss(actions_predicted, actions)
+
+        self.optimizer.zero_grad()
+        loss.backward()
+        self.optimizer.step() # FIXME: Hint 3
 
         if self.nn_baseline:
             ## TODO: update the neural network baseline using the q_values as

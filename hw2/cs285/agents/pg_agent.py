@@ -4,6 +4,8 @@ from .base_agent import BaseAgent
 from cs285.policies.MLP_policy import MLPPolicyPG
 from cs285.infrastructure.replay_buffer import ReplayBuffer
 
+from cs285.infrastructure import pytorch_util as ptu
+from sklearn import preprocessing
 
 class PGAgent(BaseAgent):
     def __init__(self, env, agent_params):
@@ -39,12 +41,19 @@ class PGAgent(BaseAgent):
             and the calculated qvals/advantages that come from the seen rewards.
         """
 
-        # TODO: update the PG actor/policy using the given batch of data, and
+        # DONE: update the PG actor/policy using the given batch of data, and
         # return the train_log obtained from updating the policy
 
         # HINT1: use helper functions to compute qvals and advantages
         # HINT2: look at the MLPPolicyPG class for how to update the policy
             # and obtain a train_log
+
+        # FIXME: WIP, probably wrong since idk how to use next_observations.
+        q_values = self.calculate_q_vals(rewards_list)
+        advantages = self.estimate_advantage(observations, rewards_list, q_values, terminals)
+        
+        policy = MLPPolicyPG()
+        train_log = policy.update(next_observations, actions, advantages, q_values)
 
         return train_log
 
@@ -54,7 +63,7 @@ class PGAgent(BaseAgent):
             Monte Carlo estimation of the Q function.
         """
 
-        # TODO: return the estimated qvals based on the given rewards, using
+        # DONE: return the estimated qvals based on the given rewards, using
             # either the full trajectory-based estimator or the reward-to-go
             # estimator
 
@@ -71,12 +80,15 @@ class PGAgent(BaseAgent):
             # to timesteps
 
         if not self.reward_to_go:
-            TODO
+            q_values = [self._discounted_return(rewards) for rewards in rewards_list]
 
         # Case 2: reward-to-go PG
         # Estimate Q^{pi}(s_t, a_t) by the discounted sum of rewards starting from t
         else:
-            TODO
+            q_values = [self._discounted_cumsum(rewards) for rewards in rewards_list]
+
+        # POSSIBLE FIXME: may need to remove the last value for each trajectory corresponding to T
+        #                 based on the formula
 
         return q_values
 
@@ -133,9 +145,10 @@ class PGAgent(BaseAgent):
 
         # Normalize the resulting advantages
         if self.standardize_advantages:
-            ## TODO: standardize the advantages to have a mean of zero
+            ## DONE: standardize the advantages to have a mean of zero
             ## and a standard deviation of one
-            advantages = 'wow, doge' # FIXME
+            advantages = preprocessing.scale(advantages)
+            # POSSIBLE FIXME: if `advantages` is n by n, then need to do the above for each vec instead of itself
 
         return advantages
 
@@ -161,7 +174,7 @@ class PGAgent(BaseAgent):
             Output: list where each index t contains sum_{t'=0}^T gamma^t' r_{t'}
         """
 
-        # TODO: create list_of_discounted_returns
+        # DONE: create list_of_discounted_returns
         # curr_sum, curr_gamma_prod = 0, 1
         # list_of_discounted_returns = []
         # for i in range(len(rewards)):
@@ -180,7 +193,7 @@ class PGAgent(BaseAgent):
             -and returns a list where the entry in each index t' is sum_{t'=t}^T gamma^(t'-t) * r_{t'}
         """
 
-        # TODO: create `list_of_discounted_returns`
+        # DONE: create `list_of_discounted_returns`
         # HINT: it is possible to write a vectorized solution, but a solution
             # using a for loop is also fine
         n = len(rewards)
