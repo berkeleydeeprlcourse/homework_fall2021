@@ -144,7 +144,7 @@ class MLPPolicyPG(MLPPolicy):
         # HINT4: use self.optimizer to optimize the loss. Remember to
             # 'zero_grad' first
 
-        # TODO
+        # FIXME: skip till Q6
 
         if self.nn_baseline:
             ## TODO: update the neural network baseline using the q_values as
@@ -157,7 +157,7 @@ class MLPPolicyPG(MLPPolicy):
                 ## ptu.from_numpy before using it in the loss
 
             # TODO
-            print()
+            'wow, doge' # FIXME
 
         train_log = {
             'Training Loss': ptu.to_numpy(loss),
