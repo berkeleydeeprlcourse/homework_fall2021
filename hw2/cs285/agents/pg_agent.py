@@ -4,12 +4,12 @@ from .base_agent import BaseAgent
 from cs285.policies.MLP_policy import MLPPolicyPG
 from cs285.infrastructure.replay_buffer import ReplayBuffer
 
-from cs285.infrastructure import pytorch_util as ptu
+from cs285.infrastructure import pytorch_util as ptu, utils
 from sklearn import preprocessing
 
 class PGAgent(BaseAgent):
     def __init__(self, env, agent_params):
-        super(PGAgent, self).__init__()
+        super().__init__()
 
         # init vars
         self.env = env
@@ -48,12 +48,10 @@ class PGAgent(BaseAgent):
         # HINT2: look at the MLPPolicyPG class for how to update the policy
             # and obtain a train_log
 
-        # FIXME: WIP, probably wrong since idk how to use next_observations.
         q_values = self.calculate_q_vals(rewards_list)
         advantages = self.estimate_advantage(observations, rewards_list, q_values, terminals)
         
-        policy = MLPPolicyPG()
-        train_log = policy.update(next_observations, actions, advantages, q_values)
+        train_log = self.actor.update(observations, actions, advantages, q_values)
 
         return train_log
 
@@ -80,15 +78,12 @@ class PGAgent(BaseAgent):
             # to timesteps
 
         if not self.reward_to_go:
-            q_values = [self._discounted_return(rewards) for rewards in rewards_list]
+            q_values = np.concatenate([self._discounted_return(r) for r in rewards_list])
 
         # Case 2: reward-to-go PG
         # Estimate Q^{pi}(s_t, a_t) by the discounted sum of rewards starting from t
         else:
-            q_values = [self._discounted_cumsum(rewards) for rewards in rewards_list]
-
-        # POSSIBLE FIXME: may need to remove the last value for each trajectory corresponding to T
-        #                 based on the formula
+            q_values = np.concatenate([self._discounted_cumsum(r) for r in rewards_list])
 
         return q_values
 
@@ -105,10 +100,11 @@ class PGAgent(BaseAgent):
             ## ensure that the value predictions and q_values have the same dimensionality
             ## to prevent silent broadcasting errors
             assert values_unnormalized.ndim == q_values.ndim
-            ## TODO: values were trained with standardized q_values, so ensure
+            ## DONE: values were trained with standardized q_values, so ensure
                 ## that the predictions have the same mean and standard deviation as
                 ## the current batch of q_values
-            values = 'wow, doge' # FIXME: wait till Q6
+            values = utils.normalize(values_unnormalized, np.mean(values_unnormalized), np.std(values_unnormalized))
+            values = utils.unnormalize(values, np.mean(q_values), np.std(q_values)) # FIXME
 
             if self.gae_lambda is not None:
                 ## append a dummy T+1 value for simpler recursive calculation
@@ -130,14 +126,18 @@ class PGAgent(BaseAgent):
                         ## 0 otherwise.
                     ## HINT 2: self.gae_lambda is the lambda value in the
                         ## GAE formula
-                    'wow, doge' # FIXME
+                    # FIXME
+                    delta_i = rews[i] + self.gamma * values[i+1] - values[i]
+                    if terminals[i] == 1: 
+                        delta_i -= self.gamma * values[i+1]
+                    advantages[i] = delta_i + self.gamma * self.gae_lambda * advantages[i+1]
 
                 # remove dummy advantage
                 advantages = advantages[:-1]
 
             else:
-                ## TODO: compute advantage estimates using q_values, and values as baselines
-                advantages = 'wow, doge' # FIXME
+                ## DONE: compute advantage estimates using q_values, and values as baselines
+                advantages = q_values - values
 
         # Else, just set the advantage to [Q]
         else:
@@ -147,8 +147,7 @@ class PGAgent(BaseAgent):
         if self.standardize_advantages:
             ## DONE: standardize the advantages to have a mean of zero
             ## and a standard deviation of one
-            advantages = preprocessing.scale(advantages)
-            # POSSIBLE FIXME: if `advantages` is n by n, then need to do the above for each vec instead of itself
+            advantages = utils.normalize(advantages, np.mean(advantages), np.std(advantages))
 
         return advantages
 

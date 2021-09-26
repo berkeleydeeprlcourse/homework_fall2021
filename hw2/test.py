@@ -24,6 +24,7 @@ class Doge(object):
 
         r = np.array([rewards[::-1]]).T
         list_of_discounted_cumsums = np.matmul(A, r)
+        print(list_of_discounted_cumsums)
 
         return list_of_discounted_cumsums
 
