@@ -9,7 +9,7 @@ from sklearn import preprocessing
 
 class PGAgent(BaseAgent):
     def __init__(self, env, agent_params):
-        super().__init__()
+        super(PGAgent, self).__init__()
 
         # init vars
         self.env = env
@@ -85,7 +85,7 @@ class PGAgent(BaseAgent):
         else:
             q_values = np.concatenate([self._discounted_cumsum(r) for r in rewards_list])
 
-        return q_values
+        return q_values.squeeze()
 
     def estimate_advantage(self, obs, rews_list, q_values, terminals):
 
@@ -104,7 +104,7 @@ class PGAgent(BaseAgent):
                 ## that the predictions have the same mean and standard deviation as
                 ## the current batch of q_values
             values = utils.normalize(values_unnormalized, np.mean(values_unnormalized), np.std(values_unnormalized))
-            values = utils.unnormalize(values, np.mean(q_values), np.std(q_values)) # FIXME
+            values = utils.unnormalize(values, np.mean(q_values), np.std(q_values))
 
             if self.gae_lambda is not None:
                 ## append a dummy T+1 value for simpler recursive calculation
@@ -127,10 +127,11 @@ class PGAgent(BaseAgent):
                     ## HINT 2: self.gae_lambda is the lambda value in the
                         ## GAE formula
                     # FIXME
-                    delta_i = rews[i] + self.gamma * values[i+1] - values[i]
-                    if terminals[i] == 1: 
-                        delta_i -= self.gamma * values[i+1]
-                    advantages[i] = delta_i + self.gamma * self.gae_lambda * advantages[i+1]
+                    # delta_i = rews[i] + self.gamma * values[i+1] - values[i]
+                    # if terminals[i] == 1: 
+                    #     delta_i -= self.gamma * values[i+1]
+                    # advantages[i] = delta_i + self.gamma * self.gae_lambda * advantages[i+1]
+                    pass
 
                 # remove dummy advantage
                 advantages = advantages[:-1]
