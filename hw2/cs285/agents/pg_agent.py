@@ -126,12 +126,10 @@ class PGAgent(BaseAgent):
                         ## 0 otherwise.
                     ## HINT 2: self.gae_lambda is the lambda value in the
                         ## GAE formula
-                    # FIXME
-                    # delta_i = rews[i] + self.gamma * values[i+1] - values[i]
-                    # if terminals[i] == 1: 
-                    #     delta_i -= self.gamma * values[i+1]
-                    # advantages[i] = delta_i + self.gamma * self.gae_lambda * advantages[i+1]
-                    pass
+                    delta_i = rews[i] + self.gamma * values[i+1] - values[i]
+                    if terminals[i] == 1:
+                        delta_i -= self.gamma * values[i+1]
+                    advantages[i] = delta_i + self.gamma * self.gae_lambda * advantages[i+1]
 
                 # remove dummy advantage
                 advantages = advantages[:-1]
