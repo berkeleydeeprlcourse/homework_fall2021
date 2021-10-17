@@ -48,6 +48,7 @@ class DQNCritic(BaseCritic):
             let num_paths be the number of paths sampled from Agent.sample_trajectories
             arguments:
                 ob_no: shape: (sum_of_path_lengths, ob_dim)
+                ac_na: length: sum_of_path_lengths. The action taken at the current step.
                 next_ob_no: shape: (sum_of_path_lengths, ob_dim). The observation after taking one step forward
                 reward_n: length: sum_of_path_lengths. Each element in reward_n is a scalar containing
                     the reward for each timestep
@@ -91,7 +92,7 @@ class DQNCritic(BaseCritic):
         loss.backward()
         utils.clip_grad_value_(self.q_net.parameters(), self.grad_norm_clipping)
         self.optimizer.step()
-
+        self.learning_rate_scheduler.step()
         return {
             'Training Loss': ptu.to_numpy(loss),
         }

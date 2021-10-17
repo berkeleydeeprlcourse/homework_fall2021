@@ -63,6 +63,7 @@ class BootstrappedContinuousCritic(nn.Module, BaseCritic):
 
             arguments:
                 ob_no: shape: (sum_of_path_lengths, ob_dim)
+                ac_na: length: sum_of_path_lengths. The action taken at the current step.
                 next_ob_no: shape: (sum_of_path_lengths, ob_dim). The observation after taking one step forward
                 reward_n: length: sum_of_path_lengths. Each element in reward_n is a scalar containing
                     the reward for each timestep
