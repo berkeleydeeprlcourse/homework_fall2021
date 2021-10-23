@@ -58,9 +58,9 @@ class MPCPolicy(BasePolicy):
             # TODO(Q5): Implement action selection using CEM.
             # Begin with randomly selected actions, then refine the sampling distribution
             # iteratively as described in Section 3.3, "Iterative Random-Shooting with Refinement" of
-            # https://arxiv.org/pdf/1909.11652.pdf 
+            # https://arxiv.org/pdf/1909.11652.pdf
             for i in range(self.cem_iterations):
-                # - Sample candidate sequences from a Gaussian with the current 
+                # - Sample candidate sequences from a Gaussian with the current
                 #   elite mean and variance
                 #     (Hint: remember that for the first iteration, we instead sample
                 #      uniformly at random just like we do for random-shooting)
@@ -94,7 +94,7 @@ class MPCPolicy(BasePolicy):
 
         # sample random actions (N x horizon)
         candidate_action_sequences = self.sample_action_sequences(
-            num_sequences=self.N, horizon=self.horizon)
+            num_sequences=self.N, horizon=self.horizon, obs=obs)
 
         if candidate_action_sequences.shape[0] == 1:
             # CEM: only a single action sequence to consider; return the first action
