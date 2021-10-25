@@ -70,7 +70,8 @@ class MPCPolicy(BasePolicy):
                 # - Update the elite mean and variance
                 pass
 
-            # TODO(Q5): Set `cem_action` to the appropriate action chosen by CEM
+            # TODO(Q5): Set `cem_action` to the appropriate action sequence chosen by CEM.
+            # The shape should be (horizon, self.ac_dim)
             cem_action = None
 
             return cem_action[None]
@@ -125,7 +126,7 @@ class MPCPolicy(BasePolicy):
         # states for each dynamics model in your ensemble.
         # Once you have a sequence of predicted states from each model in
         # your ensemble, calculate the sum of rewards for each sequence
-        # using `self.env.get_reward(predicted_obs)`
+        # using `self.env.get_reward(predicted_obs, action)` at each step.
         # You should sum across `self.horizon` time step.
         # Hint: you should use model.get_prediction and you shouldn't need
         #       to import pytorch in this file.
