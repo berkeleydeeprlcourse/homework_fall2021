@@ -28,6 +28,7 @@ The following files have blanks to be filled with your solutions from homework 1
 You will then need to implement code in the following files:
 - [exploration/rnd_model.py](cs285/exploration/rnd_model.py)
 - [agents/explore_or_exploit_agent.py](cs285/agents/explore_or_exploit_agent.py)
+- [agents/awac_agent.py](cs285/agents/awac_agent.py)
 - [critics/cql_critic.py](cs285/critics/cql_critic.py)
 
 The relevant sections are marked with `TODO`.
