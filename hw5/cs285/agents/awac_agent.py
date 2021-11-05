@@ -59,11 +59,11 @@ class AWACAgent(DQNAgent):
         vals = []
         # TODO Calculate Value Function Estimate given current observation
         # You may find it helpful to utilze get_qvals defined above
+        dist = None
         if self.agent_params['discrete']:
             for i in range(self.agent_params['ac_dim']):
                 pass
         else:
-            dist = None
             for _ in range(n_actions):
                 pass
         v_pi = None
