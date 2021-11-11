@@ -47,8 +47,33 @@ def build_mlp(
 
     # TODO: return a MLP. This should be an instance of nn.Module
     # Note: nn.Sequential is an instance of nn.Module.
-    raise NotImplementedError
+    # raise NotImplementedError
 
+    # build the sequential model
+    model = nn.Sequential()
+
+    # 1. add input layer
+    model.add_module('input', nn.Linear(input_size, size))
+
+    # 2. add hidden layers
+    for n in range(n_layers):
+        model.add_module('hidden'+str(n), nn.Linear(size, size))
+        model.add_module('activation'+str(n), activation)
+
+    # 3. add output layer
+    model.add_module('output', nn.Linear(size, output_size))
+    model.add_module('out activation', output_activation)
+
+    # 4. assert nn.Sequential model is a nn.Module
+    assert(isinstance(model, nn.Module))
+
+    return model
+
+    '''
+    Another method is to use list = [('name', nn.Linear()), (), ()] , then nn.Sequential(collections.OrderedDict(list))
+    Or list = [nn.Linear(), xx ,xx] and nn.Sequential(list)
+
+    '''
 
 device = None
 

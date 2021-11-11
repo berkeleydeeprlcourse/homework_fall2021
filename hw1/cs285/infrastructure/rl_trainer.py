@@ -8,6 +8,7 @@ import torch
 from cs285.infrastructure import pytorch_util as ptu
 from cs285.infrastructure.logger import Logger
 from cs285.infrastructure import utils
+import pickle
 
 # how many rollouts to save as videos to tensorboard
 MAX_NVIDEO = 2
@@ -87,6 +88,8 @@ class RL_Trainer(object):
         self.total_envsteps = 0
         self.start_time = time.time()
 
+        mean_list = []
+        std_list =  []
         for itr in range(n_iter):
             print("\n\n********** Iteration %i ************"%itr)
 
@@ -127,12 +130,20 @@ class RL_Trainer(object):
 
                 # perform logging
                 print('\nBeginning logging procedure...')
-                self.perform_logging(
+                mean, std = self.perform_logging(
                     itr, paths, eval_policy, train_video_paths, training_logs)
+
+                mean_list.append(mean)
+                std_list.append(std)
 
                 if self.params['save_params']:
                     print('\nSaving agent params')
                     self.agent.save('{}/policy_itr_{}.pt'.format(self.params['logdir'], itr))
+
+        print('mean : ', np.round(mean_list))
+        print('std  : ', np.round(std_list))
+
+        # self.perform_expert(expert_policy)
 
     ####################################
     ####################################
@@ -162,11 +173,16 @@ class RL_Trainer(object):
 
                 # (2) collect `self.params['batch_size']` transitions
 
+        if itr == 0:
+            with open(load_initial_expertdata, 'rb') as f:
+                loaded_paths = pickle.load(f)
+            return loaded_paths, 0, None
+
         # TODO collect `batch_size` samples to be used for training
         # HINT1: use sample_trajectories from utils
         # HINT2: you want each of these collected rollouts to be of length self.params['ep_len']
         print("\nCollecting data to be used for training...")
-        paths, envsteps_this_batch = TODO
+        paths, envsteps_this_batch = utils.sample_trajectories(self.env, collect_policy, batch_size, self.params['ep_len'])
 
         # collect more rollouts with the same policy, to be saved as videos in tensorboard
         # note: here, we collect MAX_NVIDEO rollouts, each of length MAX_VIDEO_LEN
@@ -187,12 +203,12 @@ class RL_Trainer(object):
             # TODO sample some data from the data buffer
             # HINT1: use the agent's sample function
             # HINT2: how much data = self.params['train_batch_size']
-            ob_batch, ac_batch, re_batch, next_ob_batch, terminal_batch = TODO
+            ob_batch, ac_batch, re_batch, next_ob_batch, terminal_batch =  self.agent.sample(self.params['train_batch_size']) 
 
             # TODO use the sampled data to train an agent
             # HINT: use the agent's train function
             # HINT: keep the agent's training log for debugging
-            train_log = TODO
+            train_log = self.agent.train(ob_batch, ac_batch, re_batch, next_ob_batch, terminal_batch)
             all_logs.append(train_log)
         return all_logs
 
@@ -202,6 +218,8 @@ class RL_Trainer(object):
         # TODO relabel collected obsevations (from our policy) with labels from an expert policy
         # HINT: query the policy (using the get_action function) with paths[i]["observation"]
         # and replace paths[i]["action"] with these expert labels
+        for path in paths:
+            path["action"] = expert_policy.get_action(path["observation"])
 
         return paths
 
@@ -267,3 +285,16 @@ class RL_Trainer(object):
             print('Done logging...\n\n')
 
             self.logger.flush()
+
+            return np.mean(eval_returns), np.std(eval_returns)
+
+    def perform_expert(self, expert_policy):
+        print("\nCollecting data for EXPERT !! eval...")
+        eval_paths, eval_envsteps_this_batch = utils.sample_trajectories(self.env, expert_policy, self.params['eval_batch_size'], self.params['ep_len'])
+        eval_returns = [eval_path["reward"].sum() for eval_path in eval_paths]
+        mean_exp = np.mean(eval_returns)
+        std_exp = np.std(eval_returns)
+        mean_exp_max = np.max(eval_returns)
+        mean_exp_min = np.min(eval_returns)
+
+        print('mean exp: {}, std exp: {}, mean max: {}, mean min: {}'.format(np.round(mean_exp), np.round(std_exp), np.round(mean_exp_max), np.round(mean_exp_min) ))
