@@ -72,6 +72,7 @@ class Obstacles(gym.Env):
 
         #clear
         self.counter = 0
+        self.plt.figure(self.fig.number)
         self.plt.clf()
 
         #return
