@@ -47,6 +47,7 @@ def build_mlp(
 
     # TODO: return a MLP. This should be an instance of nn.Module
     # Note: nn.Sequential is an instance of nn.Module.
+    return MLP 
     raise NotImplementedError
 
 
